@@ -13,12 +13,12 @@ import java.util.ArrayList;
 public class Piece extends Pane {
     private int playerNum;
     private boolean isClicked;
-    private int xPos;
-    private int yPos;
+    private int xPosition;
+    private int yPosition;
     public Piece(int x,int y,Color color){
         isClicked=false;
-        this.xPos=x;
-        this.yPos=y;
+        this.xPosition=x;
+        this.yPosition=y;
         Circle circle = new Circle(x*CELL_SIZE+0.5*CELL_SIZE, y*CELL_SIZE+0.5*CELL_SIZE, 0.35*CELL_SIZE);
         circle.setFill(color);
         getChildren().add(circle);
@@ -51,7 +51,7 @@ public class Piece extends Pane {
                 yMove=posMoves.get(i).get(1);
                 board[xMove][yMove].setFill(Color.GREEN);
             }
-            isClicked=true;
+            board[xPos][yPos].getPiece().isClicked=true;
         }
         else{
             System.out.println("Here");
@@ -70,8 +70,8 @@ public class Piece extends Pane {
     }
 
     private void makeMove(int xFrom,int yFrom,int xTo,int yTo){
-        board[xTo][yTo].setPiece( board[xFrom][yFrom].getPiece());
-        board[xTo][yTo].getPiece().relocate(xTo*CELL_SIZE,yTo*CELL_SIZE);
+        board[xTo][yTo].setPiece(board[xFrom][yFrom].getPiece());
+        board[xTo][yTo].getPiece().getChildren().get(0).relocate(xTo*CELL_SIZE+0.15*CELL_SIZE,yTo*CELL_SIZE+0.15*CELL_SIZE);
         board[xFrom][yFrom].setPiece(null);
     }
 
@@ -134,20 +134,20 @@ public class Piece extends Pane {
     }
 
 
-    public int getxPos() {
-        return xPos;
+    public int getxPosition() {
+        return xPosition;
     }
 
-    public void setxPos(int xPos) {
-        this.xPos = xPos;
+    public void setxPosition(int xPosition) {
+        this.xPosition = xPosition;
     }
 
-    public int getyPos() {
-        return yPos;
+    public int getyPosition() {
+        return yPosition;
     }
 
-    public void setyPos(int yPos) {
-        this.yPos = yPos;
+    public void setyPosition(int yPosition) {
+        this.yPosition = yPosition;
     }
 
     public int getPlayerNum() {
