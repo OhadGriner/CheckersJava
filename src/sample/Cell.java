@@ -4,7 +4,9 @@ import javafx.scene.shape.Rectangle;
 import static sample.Game.*;
 
 public class Cell extends Rectangle {
+
     private Piece piece;
+    // Cell constructor
     public Cell(int x,int y,Color color){
         setFill(color);
         setWidth(CELL_SIZE);
@@ -14,6 +16,7 @@ public class Cell extends Rectangle {
         relocate(x*CELL_SIZE,y*CELL_SIZE);
 
     }
+
     public Piece getPiece() {
         return piece;
     }
@@ -21,6 +24,7 @@ public class Cell extends Rectangle {
     public void setPiece(Piece piece) {
         this.piece = piece;
     }
+
     public boolean isEmpty(){
         return piece==null;
     }

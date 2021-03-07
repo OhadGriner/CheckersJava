@@ -20,12 +20,13 @@ public class CheckersGame extends Application {
     public void start(Stage primaryStage) throws Exception {
         Pane root=new Pane();
         Scene scene=new Scene(root, CELL_SIZE*BOARD_WIDTH,CELL_SIZE*BOARD_HEIGHT);
+        //add scene to stage
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Checkers");//Title of stage
-
+        //set Title of stage
+        primaryStage.setTitle("Checkers Game");
 
         board=createBoard(root);
-
+        //display the content of the stage
         primaryStage.show();
     }
     public static void main(String args[]){

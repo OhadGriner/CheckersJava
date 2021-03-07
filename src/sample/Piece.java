@@ -11,10 +11,13 @@ import javafx.scene.shape.Circle;
 import java.util.ArrayList;
 
 public class Piece extends Pane {
+
     private int playerNum;
     private boolean isClicked;
     private int xPosition;
     private int yPosition;
+
+    // Piece constructor
     public Piece(int x,int y,Color color){
         isClicked=false;
         this.xPosition=x;
@@ -35,13 +38,14 @@ public class Piece extends Pane {
 
         });
     }
+    // method when clicking on a piece
     private void click(int xPos,int yPos){
         int xMove;
         int yMove;
-        ArrayList<Integer> pos= wasClicked();
-        ArrayList<ArrayList<Integer>> posMoves=new ArrayList<>();
-        if(pos.size()==0){
-            if  (!board[xPos][yPos].isEmpty())
+        ArrayList<Integer> pos = wasClicked();    // array of checked cells that can be clicked to move the piece
+        ArrayList<ArrayList<Integer>> posMoves = new ArrayList<>();
+        if(pos.size()==0){ // no free cells to move
+            if  (!board[xPos][yPos].isEmpty()) // the clicked cell has Piece
                 posMoves=calcPosMoves(xPos,yPos);
             if (posMoves.size()==0){return;}
             board[xPos][yPos].setStroke(Color.GREEN);
@@ -68,21 +72,22 @@ public class Piece extends Pane {
 
 
     }
-
+    // method for making the move of a piece from one cell to new cell
     private void makeMove(int xFrom,int yFrom,int xTo,int yTo){
-        board[xTo][yTo].setPiece(board[xFrom][yFrom].getPiece());
+        Piece tempPiece = board[xFrom][yFrom].getPiece();
+        board[xTo][yTo].setPiece(tempPiece);
         board[xTo][yTo].getPiece().getChildren().get(0).relocate(xTo*CELL_SIZE+0.15*CELL_SIZE,yTo*CELL_SIZE+0.15*CELL_SIZE);
         board[xFrom][yFrom].setPiece(null);
     }
-
+    // method for checking the cells that the clicked piece can move to
     private ArrayList<ArrayList<Integer>> calcPosMoves(int xPos,int yPos){
-        int direction=board[xPos][yPos].getPiece().getPlayerNum();
+        int direction = board[xPos][yPos].getPiece().getPlayerNum();
         int xCheck;
         int yCheck;
-        ArrayList<ArrayList<Integer>>moves=new ArrayList<>();
+        ArrayList<ArrayList<Integer>> moves = new ArrayList<>();
         xCheck=xPos+1;
         yCheck=yPos+direction;
-        if(canCheck(xCheck,yCheck)&& board[xCheck][yCheck].isEmpty()){
+        if(canCheck(xCheck,yCheck)&&board[xCheck][yCheck].isEmpty()){
             moves.add(new ArrayList());
             moves.get(moves.size()-1).add(xCheck);
             moves.get(moves.size()-1).add(yCheck);
@@ -95,7 +100,7 @@ public class Piece extends Pane {
         }
         return moves;
     }
-
+    //method to check if X & Y are of location are a valid cell
     private boolean canCheck(int xPos,int yPos){
         return(xPos>=0 && yPos>=0 && xPos<BOARD_WIDTH && yPos<BOARD_HEIGHT);
     }
@@ -118,9 +123,9 @@ public class Piece extends Pane {
             color=!color;
         }
     }
-
+    // method to check the cells that can be clicked to move the piece
     private ArrayList<Integer> wasClicked(){
-        ArrayList<Integer>temp=new ArrayList<>();
+        ArrayList<Integer> temp = new ArrayList<>();
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
                 if (!board[i][j].isEmpty() && board[i][j].getPiece().isClicked){
