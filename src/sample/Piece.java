@@ -54,7 +54,7 @@ public class Piece extends Pane {
             board[xPos][yPos].getPiece().isClicked=true;
         }
         else{
-            System.out.println("Here Updated");
+            System.out.println("bla");
             posMoves=calcPosMoves(pos.get(0),pos.get(1));
             for(int i=0;i<posMoves.size();i++){
                 xMove=posMoves.get(i).get(0);
