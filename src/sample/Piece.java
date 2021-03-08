@@ -25,10 +25,13 @@ public class Piece extends Pane {
         Circle circle = new Circle(x*CELL_SIZE+0.5*CELL_SIZE, y*CELL_SIZE+0.5*CELL_SIZE, 0.35*CELL_SIZE);
         circle.setFill(color);
         getChildren().add(circle);
-        if(color==PLAYER1_COLOR)
+
+        if(color==PLAYER1_COLOR){
             playerNum=1;
-        else
+        }
+        else{
             playerNum=-1;
+        }
 
         setOnMousePressed(e -> {
             int xClick = (int) Math.floor(e.getSceneX()/CELL_SIZE);
@@ -42,11 +45,12 @@ public class Piece extends Pane {
     private void click(int xPos,int yPos){
         int xMove;
         int yMove;
-        ArrayList<Integer> pos = wasClicked();    // array of checked cells that can be clicked to move the piece
-        ArrayList<ArrayList<Integer>> posMoves = new ArrayList<>();
-        if(pos.size()==0){ // no free cells to move
-            if  (!board[xPos][yPos].isEmpty()) // the clicked cell has Piece
-                posMoves=calcPosMoves(xPos,yPos);
+        ArrayList<Integer> pos = wasClicked();    // array of cells that was clicked on the last round
+        ArrayList<ArrayList<Integer>> posMoves = new ArrayList<>(); //save all possible moves
+
+        if(pos.size()==0){ // check that this is the first click on piece - to move it
+            if  (!board[xPos][yPos].isEmpty()) // the clicked cell has Piece - this is the first click
+                posMoves=calcPosMoves(xPos,yPos); // which possible moves the piece has and will be colored in greed
             if (posMoves.size()==0){return;}
             board[xPos][yPos].setStroke(Color.GREEN);
             board[xPos][yPos].setStrokeWidth(5);
@@ -77,6 +81,7 @@ public class Piece extends Pane {
         Piece tempPiece = board[xFrom][yFrom].getPiece();
         board[xTo][yTo].setPiece(tempPiece);
         board[xTo][yTo].getPiece().getChildren().get(0).relocate(xTo*CELL_SIZE+0.15*CELL_SIZE,yTo*CELL_SIZE+0.15*CELL_SIZE);
+        System.out.println(xFrom + "," + yFrom + " make move-> " + xTo + "," + yTo);
         board[xFrom][yFrom].setPiece(null);
     }
     // method for checking the cells that the clicked piece can move to
