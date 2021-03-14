@@ -43,6 +43,9 @@ public class Piece extends Pane {
     }
     // method when clicking on a piece
     private void click(int xPos,int yPos){
+        System.out.print(xPos);
+        System.out.print(",");
+        System.out.println(yPos);
         int xMove;
         int yMove;
         ArrayList<Integer> pos = wasClicked();    // array of cells that was clicked on the last round
@@ -62,7 +65,6 @@ public class Piece extends Pane {
             board[xPos][yPos].getPiece().isClicked=true;
         }
         else{
-            System.out.println("bla");
             posMoves=calcPosMoves(pos.get(0),pos.get(1));
             for(int i=0;i<posMoves.size();i++){
                 xMove=posMoves.get(i).get(0);
@@ -80,9 +82,18 @@ public class Piece extends Pane {
     private void makeMove(int xFrom,int yFrom,int xTo,int yTo){
         Piece tempPiece = board[xFrom][yFrom].getPiece();
         board[xTo][yTo].setPiece(tempPiece);
-        board[xTo][yTo].getPiece().getChildren().get(0).relocate(xTo*CELL_SIZE+0.15*CELL_SIZE,yTo*CELL_SIZE+0.15*CELL_SIZE);
+        Circle circle = new Circle(xTo*CELL_SIZE+0.5*CELL_SIZE, yTo*CELL_SIZE+0.5*CELL_SIZE, 0.35*CELL_SIZE);
+        if(tempPiece.playerNum==1)
+            circle.setFill(PLAYER1_COLOR);
+        else
+            circle.setFill(PLAYER2_COLOR);
+        board[xFrom][yFrom].getPiece().getChildren().clear();
+
+
         System.out.println(xFrom + "," + yFrom + " make move-> " + xTo + "," + yTo);
         board[xFrom][yFrom].setPiece(null);
+        board[xTo][yTo].getPiece().getChildren().add(circle);
+
     }
     // method for checking the cells that the clicked piece can move to
     private ArrayList<ArrayList<Integer>> calcPosMoves(int xPos,int yPos){
@@ -124,6 +135,8 @@ public class Piece extends Pane {
                 }
                 board[i][j].setStroke(Color.BLACK);
                 board[i][j].setStrokeWidth(1);
+                if(!board[i][j].isEmpty())
+                    board[i][j].getPiece().getChildren().get(0).setViewOrder(5.0);
             }
             color=!color;
         }

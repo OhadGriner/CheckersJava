@@ -37,6 +37,7 @@ public class Game {
                     mat[i][j].setPiece(piece);
                     root.getChildren().add(piece);
                 }
+                mat[i][j].setViewOrder(6);
                 color=!color;
                 placePiece=!placePiece;
             }
