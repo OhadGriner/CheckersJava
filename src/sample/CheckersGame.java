@@ -1,6 +1,5 @@
 package sample;
 
-
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -9,10 +8,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+
+
+import javafx.scene.input.MouseEvent;
+import javafx.event.EventHandler;
+
 import static sample.Game.*;
-
-
-
 
 public class CheckersGame extends Application {
     public static Cell[][]board;
@@ -20,6 +21,9 @@ public class CheckersGame extends Application {
     public void start(Stage primaryStage) throws Exception {
         Pane root=new Pane();
         Scene scene=new Scene(root, CELL_SIZE*BOARD_WIDTH,CELL_SIZE*BOARD_HEIGHT);
+
+
+
         //add scene to stage
         primaryStage.setScene(scene);
         //set Title of stage
