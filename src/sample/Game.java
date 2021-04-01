@@ -2,10 +2,12 @@ package sample;
 
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -20,38 +22,43 @@ public class Game {
     public static final Color PLAYER1_COLOR=Color.valueOf("#313131");
     public static final Color PLAYER2_COLOR=Color.valueOf("#b91b1b");
 
+    private Cell[][]board;
+    private int turn;
+    private Pane root;
 
-    public static Cell[][] createBoard(Pane root){
+
+    public Game(Pane root){
         boolean placePiece=false;
         boolean color=true;
-        Cell [][]mat=new Cell[BOARD_HEIGHT][BOARD_WIDTH];
-        for(int i=0;i<mat.length;i++){
-            for(int j=0;j<mat[i].length;j++){
+        turn=1;
+        this.root=root;
+        board=new Cell[BOARD_HEIGHT][BOARD_WIDTH];
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[i].length;j++){
                 if(color)
-                    mat[i][j]=new Cell(i,j,CELL1_COLOR);
+                    board[i][j]=new Cell(i,j,CELL1_COLOR);
                 else
-                    mat[i][j]=new Cell(i,j,CELL2_COLOR);
+                    board[i][j]=new Cell(i,j,CELL2_COLOR);
 
 
-                root.getChildren().add(mat[i][j]);
+                root.getChildren().add(board[i][j]);
                 if (placePiece==true && (j<3) ){
                     Piece piece=new Piece(i,j,PLAYER1_COLOR);
-                    mat[i][j].setPiece(piece);
-                    root.getChildren().add(piece);
+                    board[i][j].setPiece(piece);
+                    this.root.getChildren().add(piece);
                 }
                 if(placePiece==true && (j>=BOARD_HEIGHT-3) ){
                     Piece piece=new Piece(i,j,PLAYER2_COLOR);
-                    mat[i][j].setPiece(piece);
-                    root.getChildren().add(piece);
+                    board[i][j].setPiece(piece);
+                    this.root.getChildren().add(piece);
                 }
-                mat[i][j].setViewOrder(6);
+                board[i][j].setViewOrder(6);
                 color=!color;
                 placePiece=!placePiece;
             }
             color=!color;
             placePiece=!placePiece;
         }
-
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
@@ -63,13 +70,12 @@ public class Game {
         };
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 
-        return mat;
     }
 
 
 
     // method when clicking on a piece
-    private static void click(int xPos,int yPos){
+    private void click(int xPos,int yPos){
         System.out.print(xPos);
         System.out.print(",");
         System.out.println(yPos);
@@ -79,6 +85,8 @@ public class Game {
         ArrayList<Position> posMoves = new ArrayList<>(); //save all possible moves
 
         if(pos.isEmpty()){ // check that this is the first click on piece - to move it
+            if (!board[xPos][yPos].isEmpty() && turn != board[xPos][yPos].getPiece().getPlayerNum())//not his turn
+                return;
             if  (!board[xPos][yPos].isEmpty()) // the clicked cell has Piece - this is the first click
                 posMoves=calcPosMoves(xPos,yPos); // which possible moves the piece has and will be colored in greed
             if (posMoves.size()==0){return;}
@@ -98,6 +106,8 @@ public class Game {
                 yMove=posMoves.get(i).getY();
                 if(xPos==xMove && yPos==yMove){
                     makeMove(pos.getX(),pos.getY(),xPos,yPos);
+                    turn*=-1;
+                    checkWin();
                 }
             }
             clearBoard();
@@ -106,7 +116,7 @@ public class Game {
 
     }
     // method for making the move of a piece from one cell to new cell
-    private static void makeMove(int xFrom,int yFrom,int xTo,int yTo){
+    private void makeMove(int xFrom,int yFrom,int xTo,int yTo){
         int delX=-1;
         int delY=-1;//indexes for piece to delete in eating movement
         Piece tempPiece = board[xFrom][yFrom].getPiece();
@@ -148,18 +158,12 @@ public class Game {
             board[delX][delY].getPiece().getChildren().clear();
             board[delX][delY].setPiece(null);
         }
-
-
-
-
-
-        System.out.println(xFrom + "," + yFrom + " make move-> " + xTo + "," + yTo);
         board[xFrom][yFrom].setPiece(null);
         board[xTo][yTo].getPiece().getChildren().add(circle);
 
     }
     // method for checking the cells that the clicked piece can move to
-    private static ArrayList<Position> calcPosMoves(int xPos,int yPos){
+    private ArrayList<Position> calcPosMoves(int xPos,int yPos){
         int direction = board[xPos][yPos].getPiece().getPlayerNum();
         int xCheck;
         int yCheck;
@@ -221,11 +225,11 @@ public class Game {
         return moves;
     }
     //method to check if X & Y are of location are a valid cell
-    private static boolean canCheck(int xPos,int yPos){
+    private boolean canCheck(int xPos,int yPos){
         return(xPos>=0 && yPos>=0 && xPos<BOARD_WIDTH && yPos<BOARD_HEIGHT);
     }
 
-    private static void clearBoard(){
+    private void clearBoard(){
         boolean color=true;
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -246,7 +250,7 @@ public class Game {
         }
     }
     // method to check the cells that can be clicked to move the piece
-    private static Position wasClicked(){
+    private Position wasClicked(){
         Position temp = new Position(-1,-1);
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -258,5 +262,32 @@ public class Game {
             }
         }
         return temp;
+    }
+
+    private void checkWin(){
+        boolean p1=false;
+        boolean p2=false;
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[i].length;j++){
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getPlayerNum()==1){
+                    p1=true;
+                }
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getPlayerNum()==-1){
+                    p2=true;
+                }
+            }
+        }
+        if(p1==false){
+            Label l=new Label("Player 2 won the game");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
+            l.setTranslateY(280);
+            root.getChildren().add(l);
+        }
+        if(p2==false){
+            Label l=new Label("Player 1 won the game");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
+            l.setTranslateY(280);
+            root.getChildren().add(l);
+        }
     }
 }

@@ -28,8 +28,7 @@ public class CheckersGame extends Application {
         primaryStage.setScene(scene);
         //set Title of stage
         primaryStage.setTitle("Checkers Game");
-
-        board=createBoard(root);
+        Game g=new Game(root);
         //display the content of the stage
         primaryStage.show();
     }
