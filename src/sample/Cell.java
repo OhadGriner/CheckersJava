@@ -1,9 +1,12 @@
 package sample;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+import java.io.Serializable;
+
 import static sample.Game.*;
 
-public class Cell extends Rectangle {
+public class Cell extends Rectangle{
 
     private Piece piece;
     // Cell constructor

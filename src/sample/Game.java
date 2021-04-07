@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -9,11 +10,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
+import java.io.Serializable;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 import static sample.CheckersGame.board;
 
-public class Game {
+public class Game{
     public static final int CELL_SIZE =80;
     public static final int BOARD_HEIGHT=8;
     public static final int BOARD_WIDTH=8;
@@ -116,7 +121,7 @@ public class Game {
 
     }
     // method for making the move of a piece from one cell to new cell
-    private void makeMove(int xFrom,int yFrom,int xTo,int yTo){
+    public void makeMove(int xFrom,int yFrom,int xTo,int yTo){
         int delX=-1;
         int delY=-1;//indexes for piece to delete in eating movement
         Piece tempPiece = board[xFrom][yFrom].getPiece();
@@ -160,6 +165,25 @@ public class Game {
         }
         board[xFrom][yFrom].setPiece(null);
         board[xTo][yTo].getPiece().getChildren().add(circle);
+
+        try {
+            Hello service=(Hello) Naming.lookup("rmi://192.168.0.188:5098/hello");
+            CellDescriptor des=new CellDescriptor(getBoard());
+            service.sendBoard(des);
+        }
+        catch (Exception e){
+            System.out.println("Not fine");
+        }
+        finally {
+            try{
+                Registry registry= LocateRegistry.createRegistry(5099);
+                registry.rebind("hello",new HelloServant(this));
+            }
+            catch (Exception e){
+                System.out.println("Very bad");
+            }
+        }
+
 
     }
     // method for checking the cells that the clicked piece can move to
@@ -289,5 +313,36 @@ public class Game {
             l.setTranslateY(280);
             root.getChildren().add(l);
         }
+    }
+
+    public Cell[][] getBoard() {
+        return board;
+    }
+
+    private void updateBoard(){
+        root.getChildren().clear();
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[i].length;j++){
+                root.getChildren().add(board[i][j]);
+                if(!board[i][j].isEmpty())
+                    root.getChildren().add(board[i][j].getPiece());
+            }
+
+        }
+    }
+    public void updateWithDes(CellDescriptor des){
+        int [][]mat=des.getMat();
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[i].length;j++){
+                if(mat[i][j]==0)//cell is empty
+                    board[i][j].setPiece(null);
+                else if(mat[i][j]==1)
+                    board[i][j].setPiece(new Piece(i,j,PLAYER1_COLOR));
+                else if(mat[i][j]==-1)
+                    board[i][j].setPiece(new Piece(i,j,PLAYER2_COLOR));
+            }
+        }
+        updateBoard();
+
     }
 }

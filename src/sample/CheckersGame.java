@@ -13,6 +13,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 import static sample.Game.*;
 
 public class CheckersGame extends Application {
@@ -22,8 +25,6 @@ public class CheckersGame extends Application {
         Pane root=new Pane();
         Scene scene=new Scene(root, CELL_SIZE*BOARD_WIDTH,CELL_SIZE*BOARD_HEIGHT);
 
-
-
         //add scene to stage
         primaryStage.setScene(scene);
         //set Title of stage
@@ -31,6 +32,15 @@ public class CheckersGame extends Application {
         Game g=new Game(root);
         //display the content of the stage
         primaryStage.show();
+
+
+        Registry registry= LocateRegistry.createRegistry(5099);
+        registry.rebind("hello",new HelloServant(g));
+
+
+
+
+
     }
     public static void main(String args[]){
         launch(args);
