@@ -20,13 +20,18 @@ public class Piece extends Pane{
     private int yPosition;
 
     // Piece constructor
-    public Piece(int x,int y,Color color){
+    public Piece(int x,int y,Color color,boolean queenInput){
         clicked=false;
         this.xPosition=x;
         this.yPosition=y;
         queen=false;
         Circle circle = new Circle(x*CELL_SIZE+0.5*CELL_SIZE, y*CELL_SIZE+0.5*CELL_SIZE, 0.35*CELL_SIZE);
         circle.setFill(color);
+        if(queenInput){
+            circle.setStroke(Color.YELLOW);
+            circle.setStrokeWidth(4);
+            queen=true;
+        }
         getChildren().add(circle);
 
         if(color==PLAYER1_COLOR){

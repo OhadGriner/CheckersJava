@@ -10,10 +10,17 @@ public class CellDescriptor implements Serializable {
             for(int j=0;j<board[i].length;j++) {
                 if(board[i][j].isEmpty())
                     pieceColorNum[i][j]=0;
-                else if(board[i][j].getPiece().getPlayerNum()==1)
-                    pieceColorNum[i][j]=1;
+                else if(board[i][j].getPiece().getPlayerNum()==1){
+                    if(board[i][j].getPiece().isQueen())
+                        pieceColorNum[i][j]=2;
+                    else
+                        pieceColorNum[i][j]=1;
+                }
                 else if(board[i][j].getPiece().getPlayerNum()==-1)
-                    pieceColorNum[i][j]=-1;
+                    if(board[i][j].getPiece().isQueen())
+                        pieceColorNum[i][j]=-2;
+                    else
+                        pieceColorNum[i][j]=-1;
 
             }
         }

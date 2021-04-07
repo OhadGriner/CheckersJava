@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -11,7 +10,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -48,12 +50,12 @@ public class Game{
 
                 root.getChildren().add(board[i][j]);
                 if (placePiece==true && (j<3) ){
-                    Piece piece=new Piece(i,j,PLAYER1_COLOR);
+                    Piece piece=new Piece(i,j,PLAYER1_COLOR,false);
                     board[i][j].setPiece(piece);
                     this.root.getChildren().add(piece);
                 }
                 if(placePiece==true && (j>=BOARD_HEIGHT-3) ){
-                    Piece piece=new Piece(i,j,PLAYER2_COLOR);
+                    Piece piece=new Piece(i,j,PLAYER2_COLOR,false);
                     board[i][j].setPiece(piece);
                     this.root.getChildren().add(piece);
                 }
@@ -121,7 +123,7 @@ public class Game{
 
     }
     // method for making the move of a piece from one cell to new cell
-    public void makeMove(int xFrom,int yFrom,int xTo,int yTo){
+    public void makeMove(int xFrom,int yFrom,int xTo,int yTo)  {
         int delX=-1;
         int delY=-1;//indexes for piece to delete in eating movement
         Piece tempPiece = board[xFrom][yFrom].getPiece();
@@ -167,23 +169,14 @@ public class Game{
         board[xTo][yTo].getPiece().getChildren().add(circle);
 
         try {
-            Hello service=(Hello) Naming.lookup("rmi://192.168.0.188:5098/hello");
-            CellDescriptor des=new CellDescriptor(getBoard());
+            System.out.println("Before connection");
+            Hello service = (Hello) Naming.lookup("rmi://192.168.0.188:5099/hello");
+            CellDescriptor des = new CellDescriptor(getBoard());
             service.sendBoard(des);
         }
-        catch (Exception e){
-            System.out.println("Not fine");
+        catch(Exception e){
+            System.out.println(e.getCause());
         }
-        finally {
-            try{
-                Registry registry= LocateRegistry.createRegistry(5099);
-                registry.rebind("hello",new HelloServant(this));
-            }
-            catch (Exception e){
-                System.out.println("Very bad");
-            }
-        }
-
 
     }
     // method for checking the cells that the clicked piece can move to
@@ -337,9 +330,18 @@ public class Game{
                 if(mat[i][j]==0)//cell is empty
                     board[i][j].setPiece(null);
                 else if(mat[i][j]==1)
-                    board[i][j].setPiece(new Piece(i,j,PLAYER1_COLOR));
+                    board[i][j].setPiece(new Piece(i,j,PLAYER1_COLOR,false));
                 else if(mat[i][j]==-1)
-                    board[i][j].setPiece(new Piece(i,j,PLAYER2_COLOR));
+                    board[i][j].setPiece(new Piece(i,j,PLAYER2_COLOR,false));
+                else if(mat[i][j]==2){
+                    Piece p=new Piece(i,j,PLAYER1_COLOR,true);
+                    board[i][j].setPiece(p);
+                }
+                else if(mat[i][j]==-2){
+                    Piece p=new Piece(i,j,PLAYER2_COLOR,true);
+                    board[i][j].setPiece(p);
+                }
+
             }
         }
         updateBoard();
