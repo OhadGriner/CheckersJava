@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 
+import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -31,7 +32,10 @@ public class CheckersGame extends Application {
         primaryStage.setScene(scene);
         //set Title of stage
         primaryStage.setTitle("Checkers Game");
-        Game g=new Game(root);
+        Player p1=new Player("192.168.0.175");
+        Player p2=new Player("192.168.0.188");
+        Game g=new Game(root,p1,p2);
+
         //display the content of the stage
         primaryStage.show();
 

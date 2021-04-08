@@ -20,6 +20,8 @@ public class HelloServant extends UnicastRemoteObject implements Hello{
             @Override
             public void run() {
                 g.updateWithDes(des);
+                g.changeTurn();
+                g.checkWin();
             }
         });
 

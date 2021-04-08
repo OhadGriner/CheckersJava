@@ -10,7 +10,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -32,9 +34,14 @@ public class Game{
     private Cell[][]board;
     private int turn;
     private Pane root;
+    private Player player1;
+    private Player player2;
 
 
-    public Game(Pane root){
+
+    public Game(Pane root,Player p1,Player p2){
+        player1=p1;
+        player2=p2;
         boolean placePiece=false;
         boolean color=true;
         turn=1;
@@ -82,7 +89,7 @@ public class Game{
 
 
     // method when clicking on a piece
-    private void click(int xPos,int yPos){
+    private void click(int xPos,int yPos) {
         System.out.print(xPos);
         System.out.print(",");
         System.out.println(yPos);
@@ -92,8 +99,23 @@ public class Game{
         ArrayList<Position> posMoves = new ArrayList<>(); //save all possible moves
 
         if(pos.isEmpty()){ // check that this is the first click on piece - to move it
+            InetAddress address= null;
+            try {
+                address = InetAddress.getLocalHost();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            String ip=address.getHostAddress();
+
             if (!board[xPos][yPos].isEmpty() && turn != board[xPos][yPos].getPiece().getPlayerNum())//not his turn
                 return;
+            if(ip.equals(player1.getIp())&&turn==-1)//check for turn
+                return;
+            if(ip.equals(player2.getIp())&&turn==1)//check for turn
+                return;
+
+
+
             if  (!board[xPos][yPos].isEmpty()) // the clicked cell has Piece - this is the first click
                 posMoves=calcPosMoves(xPos,yPos); // which possible moves the piece has and will be colored in greed
             if (posMoves.size()==0){return;}
@@ -170,7 +192,10 @@ public class Game{
 
         try {
             System.out.println("Before connection");
-            Hello service = (Hello) Naming.lookup("rmi://192.168.0.188:5099/hello");
+            InetAddress address= InetAddress.getLocalHost();
+            String ip=address.getHostAddress();
+            String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();
+            Hello service = (Hello) Naming.lookup("rmi://"+ipTo+":5099/hello");
             CellDescriptor des = new CellDescriptor(getBoard());
             service.sendBoard(des);
         }
@@ -281,7 +306,7 @@ public class Game{
         return temp;
     }
 
-    private void checkWin(){
+    public void checkWin(){
         boolean p1=false;
         boolean p2=false;
         for(int i=0;i<board.length;i++){
@@ -346,5 +371,8 @@ public class Game{
         }
         updateBoard();
 
+    }
+    public void changeTurn(){
+        turn*=-1;
     }
 }
