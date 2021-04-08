@@ -1,4 +1,4 @@
-package sample;
+package client;
 
 public class Position {
     private int x;

@@ -1,4 +1,4 @@
-package sample;
+package client;
 
 public class Move {
    private int fromX,fromY,toX,toY;

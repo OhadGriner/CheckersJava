@@ -1,15 +1,10 @@
-package sample;
+package client;
 
-import static sample.CheckersGame.*;
-import static sample.Game.*;
+import static client.Game.*;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Piece extends Pane{
 

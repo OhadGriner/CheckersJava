@@ -1,10 +1,7 @@
-package sample;
+package client;
 
 import javafx.application.Platform;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -15,7 +12,6 @@ public class HelloServant extends UnicastRemoteObject implements Hello{
         this.g=g;
     }
     public void sendBoard(CellDescriptor des)throws RemoteException{
-        // Create a byte array input stream
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -24,6 +20,7 @@ public class HelloServant extends UnicastRemoteObject implements Hello{
                 g.checkWin();
             }
         });
+
 
     }
 

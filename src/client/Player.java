@@ -1,6 +1,8 @@
-package sample;
+package client;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
     private String ip;
     private String user_name;
 
@@ -23,5 +25,12 @@ public class Player {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public String toString() {
+        return "Player{" +
+                "ip='" + ip + '\'' +
+                ", user_name='" + user_name + '\'' +
+                '}';
     }
 }

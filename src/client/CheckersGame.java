@@ -1,26 +1,21 @@
-package sample;
+package client;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
 
 
-import javafx.scene.input.MouseEvent;
-import javafx.event.EventHandler;
-
-import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import static sample.Game.*;
+import static client.Game.*;
 
 public class CheckersGame extends Application {
     public static Cell[][]board;
+
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Pane root=new Pane();
@@ -33,7 +28,7 @@ public class CheckersGame extends Application {
         //set Title of stage
         primaryStage.setTitle("Checkers Game");
         Player p1=new Player("192.168.0.175","Ohad");
-        Player p2=new Player("192.168.0.175","Alma");
+        Player p2=new Player("192.168.0.188","Alma");
         Game g=new Game(root,p1,p2,p1);
 
         //display the content of the stage
@@ -42,7 +37,7 @@ public class CheckersGame extends Application {
         Registry registry = LocateRegistry.createRegistry(5099);
         registry.rebind("hello", new HelloServant(g));
     }
-    public static void main(String args[]){
+    public static void main(String []args){
         launch(args);
     }
 }

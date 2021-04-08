@@ -1,10 +1,8 @@
-package sample;
+package client;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.io.Serializable;
-
-import static sample.Game.*;
+import static client.Game.*;
 
 public class Cell extends Rectangle{
 
