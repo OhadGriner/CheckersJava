@@ -36,12 +36,14 @@ public class Game{
     private Pane root;
     private Player player1;
     private Player player2;
+    private Player self;
 
 
 
-    public Game(Pane root,Player p1,Player p2){
+    public Game(Pane root,Player p1,Player p2,Player _self){
         player1=p1;
         player2=p2;
+        self=_self;
         boolean placePiece=false;
         boolean color=true;
         turn=1;
@@ -98,21 +100,18 @@ public class Game{
         Position pos = wasClicked();    // array of cells that was clicked on the last round
         ArrayList<Position> posMoves = new ArrayList<>(); //save all possible moves
 
-        if(pos.isEmpty()){ // check that this is the first click on piece - to move it
-            InetAddress address= null;
-            try {
-                address = InetAddress.getLocalHost();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            String ip=address.getHostAddress();
+        if(pos.isEmpty()) { // check that this is the first click on piece - to move it
 
-            if (!board[xPos][yPos].isEmpty() && turn != board[xPos][yPos].getPiece().getPlayerNum())//not his turn
+
+            if (!board[xPos][yPos].isEmpty() && turn != board[xPos][yPos].getPiece().getPlayerNum()){//not his turn
                 return;
-            if(ip.equals(player1.getIp())&&turn==-1)//check for turn
+            }
+            if(self.getUser_name().equals(player1.getUser_name())&&turn==-1) {//check for turn
                 return;
-            if(ip.equals(player2.getIp())&&turn==1)//check for turn
+            }
+            if(self.getUser_name().equals(player2.getUser_name())&&turn==1) {//check for turn
                 return;
+            }
 
 
 
@@ -195,7 +194,8 @@ public class Game{
             InetAddress address= InetAddress.getLocalHost();
             String ip=address.getHostAddress();
             String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();
-            Hello service = (Hello) Naming.lookup("rmi://"+ipTo+":5099/hello");
+            String portTo=(self.getUser_name().equals(player1.getUser_name())) ? "5098" : "5099";
+            Hello service = (Hello) Naming.lookup("rmi://"+ipTo+":"+portTo+"/hello");
             CellDescriptor des = new CellDescriptor(getBoard());
             service.sendBoard(des);
         }
