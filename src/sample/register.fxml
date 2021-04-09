@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="319.0" prefWidth="600.0" style="-fx-background-color: #f4b183;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.LoginController">
+    <left>
+        <AnchorPane prefHeight="400.0" prefWidth="288.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="319.0" fitWidth="296.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../Pics/Opening.PNG" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+    </left>
+    <right>
+        <AnchorPane prefHeight="319.0" prefWidth="338.0" style="-fx-background-color: #f4b183;" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <children>
+                <TextField fx:id="input_user_name" layoutX="121.0" layoutY="88.0" promptText="Username" style="-fx-background-color: #fad8c1;" />
+                <PasswordField fx:id="input_password" layoutX="121.0" layoutY="123.0" promptText="Password" style="-fx-background-color: #fad8c1;" />
+                <Button fx:id="registerButton" layoutX="22.0" layoutY="272.0" mnemonicParsing="false" onAction="#registerButtonAction" prefHeight="25.0" prefWidth="190.0" style="-fx-background-color: #B78462;" text="Register" textFill="WHITE" />
+                <Label fx:id="registerStatus" alignment="CENTER" layoutX="14.0" layoutY="230.0" prefHeight="19.0" prefWidth="285.0" textFill="RED">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+                <Button fx:id="moveToLoginButton" layoutX="227.0" layoutY="272.0" mnemonicParsing="false" onAction="#moveToLogin" prefHeight="25.0" prefWidth="71.0" style="-fx-background-color: #964b00;" text="Login" textFill="WHITE" />
+                <Label layoutX="26.0" layoutY="13.0" prefHeight="51.0" prefWidth="267.0" text="Enter needed details:" textFill="#6b3a19">
+                    <font>
+                        <Font name="Matura MT Script Capitals" size="29.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="input_first_name" layoutX="121.0" layoutY="158.0" promptText="First name" style="-fx-background-color: #fad8c1;" />
+                <TextField fx:id="input_last_name" layoutX="121.0" layoutY="193.0" promptText="Last name" style="-fx-background-color: #fad8c1;" />
+                <Label layoutX="36.0" layoutY="87.0" prefHeight="27.0" prefWidth="82.0" text="Username:">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <Label layoutX="36.0" layoutY="122.0" prefHeight="27.0" prefWidth="82.0" text="Password:">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <Label layoutX="36.0" layoutY="157.0" prefHeight="27.0" prefWidth="82.0" text="First name:">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <Label layoutX="36.0" layoutY="192.0" prefHeight="27.0" prefWidth="82.0" text="Last name:">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </right>
+</BorderPane>
