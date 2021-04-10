@@ -1,15 +1,22 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -46,6 +53,8 @@ public class LoginController {
     private TextField tf_username;
     @FXML
     private PasswordField tf_password;
+    @FXML
+    private Button moveToBoxScoreButton;
 
 
     public void loginButtonAction(ActionEvent event){
@@ -104,6 +113,68 @@ public class LoginController {
         stage.setScene(new Scene(root, 600, 319));
 
     }
+
+    public void moveToBoxScore(ActionEvent event){
+        Stage stage=(Stage) moveToBoxScoreButton.getScene().getWindow();
+
+        //Username column
+        TableColumn<TableRow,String> userNameColumn=new TableColumn<>("Username");
+        userNameColumn.setMinWidth(100);
+        userNameColumn.setCellValueFactory(new PropertyValueFactory<>("uName"));
+        //First name column
+        TableColumn<TableRow,String>firstNameColumn=new TableColumn<>("First name");
+        firstNameColumn.setMinWidth(50);
+        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("fName"));
+        //Last name column
+        TableColumn<TableRow,String>lastNameColumn=new TableColumn<>("Last name");
+        lastNameColumn.setMinWidth(50);
+        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lName"));
+        //Games wom column
+        TableColumn<TableRow,Integer>gamesWonColumn=new TableColumn<>("Games won");
+        gamesWonColumn.setMinWidth(20);
+        gamesWonColumn.setCellValueFactory(new PropertyValueFactory<>("gWon"));
+        //Games played column
+        TableColumn<TableRow,Integer>gamesPlayedColumn=new TableColumn<>("Games played");
+        gamesPlayedColumn.setMinWidth(20);
+        gamesPlayedColumn.setCellValueFactory(new PropertyValueFactory<>("gPlayed"));
+        //Winning rate column
+        TableColumn<TableRow,Double>winRateColumn=new TableColumn<>("Winning rate");
+        winRateColumn.setMinWidth(100);
+        winRateColumn.setCellValueFactory(new PropertyValueFactory<>("winRate"));
+
+        TableView<TableRow>table=new TableView<>();
+        table.setItems(getPlayers());
+        table.getColumns().addAll(userNameColumn,firstNameColumn,lastNameColumn,gamesWonColumn,gamesPlayedColumn,winRateColumn);
+
+        Button b=new Button("Back to Log in");
+        b.setStyle("-fx-text-fill: white; -fx-background-color: #964b00;");
+        b.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("login.fxml"));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                stage.setTitle("Checkers Game");
+                stage.setScene(new Scene(root, 600, 319));
+            }
+        });
+        VBox vbox=new VBox();
+        vbox.getChildren().addAll(table,b);
+        Scene scene=new Scene(vbox);
+        stage.setScene(scene);
+    }
+
+    public ObservableList<TableRow> getPlayers(){
+        ObservableList<TableRow>players= FXCollections.observableArrayList();
+        JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
+        sqlConnect.connect();
+        sqlConnect.updateList(players);
+
+        return players;
+    }
+
     private static void startGame(Stage stage,String user_name , int games_won,int games_played) throws Exception {
         System.out.println(user_name);
         System.out.println(games_won);
@@ -118,9 +189,22 @@ public class LoginController {
         service.addPlayer(p);
 
         GameCouple gc=service.getGC();
+
+
+        BorderPane borderPane=new BorderPane();
+        Label l=new Label("Waiting for another player to join");
+        l.setStyle("-fx-text-fill: white; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#000000");
+        borderPane.setStyle("-fx-background-color:#000000");
+        borderPane.setCenter(l);
+
+        Scene scene1= new Scene(borderPane);
+        stage.setScene(scene1);
+        stage.show();;
+
         while (gc == null){//waiting for a rival
             gc=service.getGC();
         }
+
         Pane root=new Pane();
         Scene scene=new Scene(root, CELL_SIZE*BOARD_WIDTH+200,CELL_SIZE*BOARD_HEIGHT);
 
@@ -135,6 +219,9 @@ public class LoginController {
         Player self=(p1.getUser_name().equals(user_name)) ? p1 : p2;
         Game g=new Game(root,p1,p2,self);
 
+        JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
+        sqlConnect.connect();
+        sqlConnect.updateGamesPlayed(user_name,games_played+1);
 
 
         //display the content of the stage

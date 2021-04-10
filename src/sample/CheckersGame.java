@@ -27,8 +27,8 @@ public class CheckersGame extends Application {
         primaryStage.setScene(scene);
         //set Title of stage
         primaryStage.setTitle("Checkers Game");
-        Player p1=new Player("192.168.0.175","Ohad",0,0);
-        Player p2=new Player("192.168.0.188","Alma",0,0);
+        Player p1=new Player("192.168.0.175","Ohad",5,6);
+        Player p2=new Player("192.168.0.188","Alma",2,3);
         Game g=new Game(root,p1,p2,p1);
 
         //display the content of the stage

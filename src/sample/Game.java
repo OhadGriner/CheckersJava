@@ -80,13 +80,21 @@ public class Game{
 
     }
 
-    private void createNames() {
+    private void createNames() {//function to showcase on screen usernames and game record
         Label l1=new Label(player1.getUser_name());
         Label l2=new Label(player2.getUser_name());
+        String gameRecord1=String.valueOf(player1.getGames_won())+"/"+String.valueOf(player1.getGames_played());
+        Label l3=new Label(gameRecord1);
+        String gameRecord2=String.valueOf(player2.getGames_won())+"/"+String.valueOf(player2.getGames_played());
+        Label l4=new Label(gameRecord2);
         l1.relocate(BOARD_WIDTH*CELL_SIZE+5,0);
         l2.relocate(BOARD_WIDTH*CELL_SIZE+5,(BOARD_HEIGHT-1)*CELL_SIZE);
+        l3.relocate(BOARD_WIDTH*CELL_SIZE+5,CELL_SIZE*0.5);
+        l4.relocate(BOARD_WIDTH*CELL_SIZE+5,(BOARD_HEIGHT-0.5)*CELL_SIZE);
         l1.setStyle("-fx-text-fill: white; -fx-font-size: 20pt; -fx-font-weight: bold;");
         l2.setStyle("-fx-text-fill: white; -fx-font-size: 20pt; -fx-font-weight: bold;");
+        l3.setStyle("-fx-text-fill: white; -fx-font-size: 20pt; -fx-font-weight: bold;");
+        l4.setStyle("-fx-text-fill: white; -fx-font-size: 20pt; -fx-font-weight: bold;");
         Rectangle r=new Rectangle();
         r.setFill(Color.web("733404"));
         r.setWidth(200);
@@ -95,6 +103,8 @@ public class Game{
         root.getChildren().add(r);
         root.getChildren().add(l1);
         root.getChildren().add(l2);
+        root.getChildren().add(l3);
+        root.getChildren().add(l4);
     }
 
 
@@ -332,12 +342,22 @@ public class Game{
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
+            if(self.getUser_name().equals(player2.getUser_name())) {
+                JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
+                sqlConnect.connect();
+                sqlConnect.updateGamesWon(player2.getUser_name(), player2.getGames_won() + 1);
+            }
         }
         if(p2==false){
             Label l=new Label(player1.getUser_name()+" won the game");
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
+            if(self.getUser_name().equals(player1.getUser_name())) {
+                JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
+                sqlConnect.connect();
+                sqlConnect.updateGamesWon(player1.getUser_name(), player1.getGames_won() + 1);
+            }
         }
     }
 

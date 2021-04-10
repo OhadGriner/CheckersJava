@@ -6,6 +6,8 @@
  */
 package sample;
 
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 
 public class JDBCPostgreSQLConnect {
@@ -62,6 +64,35 @@ public class JDBCPostgreSQLConnect {
 
                 //System.out.println(id + "," + first_name + "," + last_name + "," + user_name + "," + user_pass
                         //+ "," + games_won + "," + games_played);
+
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //System.out.println();
+    }
+    /**
+     * update an observable list of all players
+     *
+     */
+    public void updateList(ObservableList<TableRow>list){
+        try (Connection connection = DriverManager.getConnection(url,user,password);) { // open connection
+            Statement statement1 = connection.createStatement();
+
+            ResultSet resultSet1 = statement1.executeQuery("SELECT * FROM players");
+            //System.out.println("players Table:");
+            // loop over the rows and print them
+            while (resultSet1.next()) {
+                int id = resultSet1.getInt("id");
+                String first_name = resultSet1.getString("first_name");
+                String last_name = resultSet1.getString("last_name");
+                String user_name = resultSet1.getString("user_name");
+                String user_pass = resultSet1.getString("user_pass");
+                int games_won = resultSet1.getInt("games_won");
+                int games_played = resultSet1.getInt("games_played");
+                list.add(new TableRow(user_name,first_name,last_name,games_won,games_played));
+                //System.out.println(id + "," + first_name + "," + last_name + "," + user_name + "," + user_pass
+                //+ "," + games_won + "," + games_played);
 
             }
         }catch (SQLException e) {
