@@ -35,7 +35,7 @@ public class CheckersGame extends Application {
         primaryStage.show();
 
         Registry registry = LocateRegistry.createRegistry(5099);
-        registry.rebind("hello", new HelloServant(g));
+        registry.rebind("hello", new NetworkServant(g));
 
 
     }

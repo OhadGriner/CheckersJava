@@ -5,9 +5,9 @@ import javafx.application.Platform;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class HelloServant extends UnicastRemoteObject implements Hello{
+public class NetworkServant extends UnicastRemoteObject implements Network {
     private Game g;
-    public HelloServant(Game g)throws RemoteException{
+    public NetworkServant(Game g)throws RemoteException{
         super();
         this.g=g;
     }

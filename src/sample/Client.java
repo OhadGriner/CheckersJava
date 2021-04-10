@@ -50,7 +50,7 @@ public class Client extends Application {
         primaryStage.show();
         int port=(p1.getUser_name().equals(user_name)) ? 5099 : 5098;
         Registry registry1 = LocateRegistry.createRegistry(port);
-        registry1.rebind("hello", new HelloServant(g));
+        registry1.rebind("hello", new NetworkServant(g));
 
 
 

@@ -7,7 +7,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 
 import java.net.InetAddress;
 import java.rmi.Naming;
@@ -213,7 +212,7 @@ public class Game{
             String ip=address.getHostAddress();
             String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();
             String portTo=(self.getUser_name().equals(player1.getUser_name())) ? "5098" : "5099";
-            Hello service = (Hello) Naming.lookup("rmi://"+ipTo+":"+portTo+"/hello");
+            Network service = (Network) Naming.lookup("rmi://"+ipTo+":"+portTo+"/hello");
             CellDescriptor des = new CellDescriptor(getBoard());
             service.sendBoard(des);
         }
