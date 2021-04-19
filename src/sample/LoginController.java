@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class LoginController {
     private PasswordField tf_password;
     @FXML
     private Button moveToBoxScoreButton;
+    private static String serverIp="192.168.0.177";
 
 
     public void loginButtonAction(ActionEvent event){
@@ -66,10 +68,10 @@ public class LoginController {
                 String user_name = tf_username.getText();
                 int games_won=sqlConnect.getNumOfWins(user_name);
                 int games_played=sqlConnect.getNumOfGames(user_name);
-                startGame(stage,user_name,games_won,games_played);//creating game
+                startGame(stage,user_name,games_won,games_played,false);//creating game
             }
             catch (Exception e){
-                System.out.println("Couldn't play game");
+                System.out.println(e);
             }
         }
     }
@@ -78,12 +80,16 @@ public class LoginController {
         JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
         sqlConnect.connect();
         if(input_user_name.getText().isBlank() || input_first_name.getText().isBlank()|| input_last_name.getText().isBlank()|| input_password.getText().isBlank()){
+            registerStatus.setTextFill(Color.RED);
             registerStatus.setText("Can't leave a field empty");
         }
         else if(sqlConnect.isUserExist(input_user_name.getText())){
+            registerStatus.setTextFill(Color.RED);
             registerStatus.setText("Username is taken, try another one");
         }
         else{
+            registerStatus.setTextFill(Color.BLACK);
+            registerStatus.setText("Registration is completed ");
             sqlConnect.insertByValue(input_first_name.getText(),input_last_name.getText(),input_user_name.getText(),input_password.getText(),0,0);
         }
     }
@@ -170,7 +176,7 @@ public class LoginController {
         return players;
     }
 
-    private static void startGame(Stage stage,String user_name , int games_won,int games_played) throws Exception {
+    public static void startGame(Stage stage,String user_name , int games_won,int games_played,boolean secondGame) throws Exception {
         System.out.println(user_name);
         System.out.println(games_won);
         System.out.println(games_played);
@@ -179,7 +185,7 @@ public class LoginController {
         String ip=address.getHostAddress();
 
 
-        Match service = (Match) Naming.lookup("rmi://192.168.0.175:5097/matchMaking");//letting server know that you want a match
+        Match service = (Match) Naming.lookup("rmi://"+serverIp+":5097/matchMaking");//letting server know that you want a match
         Player p=new Player(ip,user_name,games_won,games_played);
         service.addPlayer(p);
 
@@ -199,6 +205,7 @@ public class LoginController {
         while (gc == null){//waiting for a rival
             gc=service.getGC();
         }
+        service.initGC();
 
         Pane root=new Pane();
         Scene scene=new Scene(root, CELL_SIZE*BOARD_WIDTH+200,CELL_SIZE*BOARD_HEIGHT);
@@ -221,9 +228,11 @@ public class LoginController {
 
         //display the content of the stage
         stage.show();
-        int port=(p1.getUser_name().equals(user_name)) ? 5099 : 5098;
-        Registry registry1 = LocateRegistry.createRegistry(port);
-        registry1.rebind("hello", new NetworkServant(g));
+        if (!secondGame) {
+            int port = (p1.getUser_name().equals(user_name)) ? 5099 : 5098;
+            Registry registry1 = LocateRegistry.createRegistry(port);
+            registry1.rebind("hello", new NetworkServant(g));
+        }
     }
 
 }

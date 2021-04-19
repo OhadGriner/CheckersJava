@@ -4,7 +4,7 @@ import javafx.scene.shape.Rectangle;
 
 import static sample.Game.*;
 
-public class Cell extends Rectangle{
+public class Cell extends Rectangle{//a class that represents
 
     private Piece piece;
     // Cell constructor

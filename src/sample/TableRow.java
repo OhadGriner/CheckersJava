@@ -8,7 +8,7 @@ public class TableRow {
     private int gPlayed;
     private double winRate;
 
-    public TableRow(String uName, String fName, String lName, int gWon, int gPlayed) {
+    public TableRow(String uName, String fName, String lName, int gWon, int gPlayed) {//a row in box score
         this.uName = uName;
         this.fName = fName;
         this.lName = lName;

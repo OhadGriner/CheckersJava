@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class Piece extends Pane{
+public class Piece extends Pane{//class that represents a piece in checkers game
 
     private boolean queen;
     private int playerNum;

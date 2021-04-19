@@ -17,7 +17,7 @@ public class NetworkServant extends UnicastRemoteObject implements Network {
             public void run() {
                 g.updateWithDes(des);
                 g.changeTurn();
-                g.checkWin();
+                g.checkWin();//make sure losing side updates after loss
             }
         });
 

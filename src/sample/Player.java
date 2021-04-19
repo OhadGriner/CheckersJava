@@ -53,4 +53,11 @@ public class Player implements Serializable {
     public void setGames_played(int games_played) {
         this.games_played = games_played;
     }
+
+    public void incGames_played() {
+        this.games_played++;
+    }
+    public void incGames_won() {
+        this.games_won++;
+    }
 }

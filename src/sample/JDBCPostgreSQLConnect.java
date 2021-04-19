@@ -15,7 +15,7 @@ public class JDBCPostgreSQLConnect {
     // JDBC URL
     // JDBC user
     // JDBC password
-    private final String url ="jdbc:postgresql://192.168.0.175:5432/cdb";
+    private final String url ="jdbc:postgresql://192.168.0.177:5432/cdb";
     private final String user= "postgres";
     private final String password= "Aa123456";
     /**

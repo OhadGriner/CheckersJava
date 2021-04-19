@@ -1,13 +1,22 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.Naming;
 import java.util.ArrayList;
@@ -38,6 +47,17 @@ public class Game{
         boolean color=true;
         turn=1;
         this.root=root;
+        /*
+        Stage stage=(Stage)root.getScene().getWindow();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                System.out.println("Im out");
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        */
         board=new Cell[BOARD_HEIGHT][BOARD_WIDTH];
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -116,7 +136,8 @@ public class Game{
         int yMove;
         Position pos = wasClicked();    // array of cells that was clicked on the last round
         ArrayList<Position> posMoves = new ArrayList<>(); //save all possible moves
-
+        if(!canCheck(xPos,yPos))
+            return;
         if(pos.isEmpty()) { // check that this is the first click on piece - to move it
 
 
@@ -207,10 +228,10 @@ public class Game{
         board[xTo][yTo].getPiece().getChildren().add(circle);
 
         try {
-            System.out.println("Before connection");
+            System.out.println("Before connection");//send board update to other player
             InetAddress address= InetAddress.getLocalHost();
             String ip=address.getHostAddress();
-            String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();
+            String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();//check which player am I
             String portTo=(self.getUser_name().equals(player1.getUser_name())) ? "5098" : "5099";
             Network service = (Network) Naming.lookup("rmi://"+ipTo+":"+portTo+"/hello");
             CellDescriptor des = new CellDescriptor(getBoard());
@@ -288,7 +309,7 @@ public class Game{
         return(xPos>=0 && yPos>=0 && xPos<BOARD_WIDTH && yPos<BOARD_HEIGHT);
     }
 
-    private void clearBoard(){
+    private void clearBoard(){//clear board colors
         boolean color=true;
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -322,7 +343,7 @@ public class Game{
         }
         return temp;
     }
-
+    //check if any player won and update db
     public void checkWin(){
         boolean p1=false;
         boolean p2=false;
@@ -341,7 +362,9 @@ public class Game{
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
+            newGameButton();
             if(self.getUser_name().equals(player2.getUser_name())) {
+                self.incGames_won();
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player2.getUser_name(), player2.getGames_won() + 1);
@@ -352,7 +375,9 @@ public class Game{
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
+            newGameButton();
             if(self.getUser_name().equals(player1.getUser_name())) {
+                self.incGames_won();
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player1.getUser_name(), player1.getGames_won() + 1);
@@ -360,11 +385,30 @@ public class Game{
         }
     }
 
+    public void newGameButton(){
+        self.incGames_played();
+        Button b=new Button("Start a new game");
+        b.setStyle("-fx-text-fill: white; -fx-font-size: 30pt;-fx-background-color: #964b00;");
+        b.setLayoutX(200);
+        b.setLayoutY(380);
+        b.setMinSize(120, 100);
+        b.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                try {
+                    LoginController.startGame((Stage)root.getScene().getWindow(),self.getUser_name(),self.getGames_won(),self.getGames_played(),true);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        root.getChildren().add(b);
+    }
+
     public Cell[][] getBoard() {
         return board;
     }
 
-    private void updateBoard(){
+    private void updateBoard(){//update display after board update
         root.getChildren().clear();
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -376,7 +420,7 @@ public class Game{
         }
         createNames();
     }
-    public void updateWithDes(CellDescriptor des){
+    public void updateWithDes(CellDescriptor des){//update board using Cell descriptor object
         int [][]mat=des.getMat();
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
