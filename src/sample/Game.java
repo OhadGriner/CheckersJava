@@ -47,17 +47,7 @@ public class Game{
         boolean color=true;
         turn=1;
         this.root=root;
-        /*
-        Stage stage=(Stage)root.getScene().getWindow();
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent e) {
-                System.out.println("Im out");
-                Platform.exit();
-                System.exit(0);
-            }
-        });
-        */
+
         board=new Cell[BOARD_HEIGHT][BOARD_WIDTH];
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board[i].length;j++){
@@ -96,6 +86,27 @@ public class Game{
             }
         };
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+        Stage stage=(Stage)root.getScene().getWindow();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                System.out.println("Im out");
+                int pNum=self.getUser_name().equals(player1.getUser_name())? 1:-1;
+                try {
+                    InetAddress address= InetAddress.getLocalHost();
+                    String ip=address.getHostAddress();
+                    String ipTo= (ip.equals(player1.getIp())) ? player2.getIp() : player1.getIp();//check which player am I
+                    String portTo=(self.getUser_name().equals(player1.getUser_name())) ? "5098" : "5099";
+                    Network service = (Network) Naming.lookup("rmi://"+ipTo+":"+portTo+"/hello");
+                    service.quitMatch(pNum);
+                }
+                catch(Exception ex){
+                    System.out.println(ex);
+                }
+                Platform.exit();
+                System.exit(0);
+            }
+        });
 
     }
 
@@ -173,7 +184,7 @@ public class Game{
                 if(xPos==xMove && yPos==yMove){
                     makeMove(pos.getX(),pos.getY(),xPos,yPos);
                     turn*=-1;
-                    checkWin();
+                    checkWin(0);
                 }
             }
             clearBoard();
@@ -344,7 +355,10 @@ public class Game{
         return temp;
     }
     //check if any player won and update db
-    public void checkWin(){
+    public void checkWin(int pNum){//pNum determines if certain player lost
+        //1: player 1 lost
+        //-1:player 2 lost
+        //0: there is no certain loser
         boolean p1=false;
         boolean p2=false;
         for(int i=0;i<board.length;i++){
@@ -357,27 +371,25 @@ public class Game{
                 }
             }
         }
-        if(p1==false){
+        if(p1==false||pNum==1){
             Label l=new Label(player2.getUser_name()+" won the game");
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
             newGameButton();
             if(self.getUser_name().equals(player2.getUser_name())) {
-                self.incGames_won();
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player2.getUser_name(), player2.getGames_won() + 1);
             }
         }
-        if(p2==false){
+        if(p2==false||pNum==-1){
             Label l=new Label(player1.getUser_name()+" won the game");
             l.setStyle("-fx-text-fill: black; -fx-font-size: 45pt; -fx-font-weight: bold; -fx-background-color:#dddddd");
             l.setTranslateY(280);
             root.getChildren().add(l);
             newGameButton();
             if(self.getUser_name().equals(player1.getUser_name())) {
-                self.incGames_won();
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player1.getUser_name(), player1.getGames_won() + 1);
