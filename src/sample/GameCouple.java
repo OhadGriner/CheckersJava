@@ -19,10 +19,10 @@ public class GameCouple implements Serializable {
     }
 
     public Player getPlayer2() {
-        return player2;
-    }
+         return player2;
+         }
 
     public void setPlayer2(Player player2) {
         this.player2 = player2;
-    }
+        }
 }
