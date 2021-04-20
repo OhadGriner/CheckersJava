@@ -381,6 +381,7 @@ public class Game{
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player2.getUser_name(), player2.getGames_won() + 1);
+                self.incGames_won();
             }
         }
         if(p2==false||pNum==-1){
@@ -393,6 +394,7 @@ public class Game{
                 JDBCPostgreSQLConnect sqlConnect = new JDBCPostgreSQLConnect(); // crate instence of the class in order to user it's methods
                 sqlConnect.connect();
                 sqlConnect.updateGamesWon(player1.getUser_name(), player1.getGames_won() + 1);
+                self.incGames_won();
             }
         }
     }

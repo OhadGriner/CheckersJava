@@ -51,7 +51,7 @@ public class LoginController {
     private PasswordField tf_password;
     @FXML
     private Button moveToBoxScoreButton;
-    private static String serverIp="192.168.0.177";
+    private static String serverIp="192.168.0.175";
 
 
     public void loginButtonAction(ActionEvent event){
